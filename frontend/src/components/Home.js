@@ -25,17 +25,42 @@ const Home = () => {
       return;
     }
 
-    try {
-      const res = await axios.post(`${API_BASE_URL}/shorten`, { originalUrl: url });
-      const shortenedUrl = `${SHORTENER_BASE_URL}/${res.data.shortCode}`;
-      setShortUrl(shortenedUrl);
-    } catch (err) {
-      setError('An error occurred. Please try again.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+//     try {
+
+//       const res = await axios.post(`${API_BASE_URL}/shorten`, { originalUrl: url });
+//       const shortenedUrl = `${SHORTENER_BASE_URL}/${res.data.shortCode}`;
+//       setShortUrl(shortenedUrl);
+//     } catch (err) {
+//       setError('An error occurred. Please try again.');
+//       console.error(err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+   try {
+     // 1. Get token from localStorage
+     const token = localStorage.getItem('token');
+    
+     // 2. Send POST request with the token in the headers
+     const res = await axios.post(
+       `${API_BASE_URL}/shorten`, 
+       { originalUrl: url },
+       {
+         headers: {
+           'x-auth-token': token
+         }
+       }
+     );
+
+     const shortenedUrl = `${SHORTENER_BASE_URL}/${res.data.shortCode}`;
+     setShortUrl(shortenedUrl);
+   } catch (err) {
+     setError('An error occurred. Please try again.');
+     console.error(err);
+   } finally {
+     setLoading(false);
+   }
+ };
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shortUrl)

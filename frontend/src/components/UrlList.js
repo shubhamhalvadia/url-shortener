@@ -10,9 +10,19 @@ const UrlList = () => {
   const SHORTENER_BASE_URL = 'http://localhost:5001';
 
   useEffect(() => {
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // If there's no token, set a custom error message and stop loading
+      setError('You must be logged in to view your URLs. Please log in or register.');
+      setLoading(false);
+      return;
+    }
     const fetchUrls = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/urls`);
+        const res = await axios.get(`${API_BASE_URL}/urls`, {
+          headers: { 'x-auth-token': token }
+        });
         setUrls(res.data);
       } catch (err) {
         setError('Failed to fetch URLs');
